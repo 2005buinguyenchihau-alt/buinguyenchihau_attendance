@@ -31,9 +31,9 @@ app.get('/', (req, res) => {
     status: 'ONLINE',
     project: 'PRIME Student Attendance System',
     author: 'Bùi Nguyễn Chí Hậu',
-    api_name: 'buinguyenchihau_api',
+    api_name: 'BÙI NGUYỄN CHÍ HẬU - WEB API ĐIỂM DANH SINH VIÊN',
     database_name: 'buinguyenchihau_db',
-    swagger_ui: '/swagger',
+    swagger_ui: '/swagger/',
     version: '1.0.0',
     timestamp: new Date().toISOString(),
   });
@@ -51,9 +51,10 @@ const swaggerUi = require('swagger-ui-express');
 
 // Swagger UI Interactive API Documentation (Official Swagger UI Express)
 const swaggerCustomOptions = {
-  customSiteTitle: 'Swagger UI - PRIME Attendance API | Bùi Nguyễn Chí Hậu',
+  customSiteTitle: 'BÙI NGUYỄN CHÍ HẬU - Web API Điểm Danh Sinh Viên',
   customCss: `
     .swagger-ui .topbar { display: none !important; }
+    .swagger-ui .info .title { color: #1d4ed8 !important; font-weight: 800 !important; }
   `,
 };
 

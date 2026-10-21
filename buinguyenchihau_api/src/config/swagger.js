@@ -6,7 +6,7 @@
 const openapiSpec = {
   openapi: '3.0.0',
   info: {
-    title: 'PRIME Student Attendance System API',
+    title: 'BÙI NGUYỄN CHÍ HẬU - WEB API ĐIỂM DANH SINH VIÊN',
     version: '1.0.0',
     description: `### Hệ thống Web API Điểm danh sinh viên thông minh
 **Sinh viên thực hiện:** Bùi Nguyễn Chí Hậu  
@@ -14,7 +14,7 @@ const openapiSpec = {
 **Công nghệ:** Node.js (v22+), SQLite (WAL Mode), JWT Authentication, Dynamic QR (TOTP 5s), Face ID Biometrics.
 
 ---
-### 🔑 Tài khoản mẫu để kiểm tra:
+### 🔑 Tài khoản mẫu dành cho Thầy / Giảng viên kiểm tra:
 * **Admin (Quản trị viên):** \`admin\` / \`Admin@123\`
 * **Giảng viên (Lecturer):** \`giangvien.hau\` / \`Gv@123456\`
 * **Sinh viên (Student):** \`sinhvien.hau\` / \`Sv@123456\` (Email nhận OTP: \`2005buinguyenchihau@gmail.com\`)
