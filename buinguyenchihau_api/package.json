@@ -1,0 +1,26 @@
+{
+  "name": "buinguyenchihau_api",
+  "version": "1.0.0",
+  "description": "Backend WebAPI cho he thong diem danh sinh vien PRIME - Bui Nguyen Chi Hau",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node test/api_test.js"
+  },
+  "keywords": [
+    "attendance",
+    "buinguyenchihau",
+    "prime",
+    "flutter",
+    "webapi"
+  ],
+  "author": "Bui Nguyen Chi Hau",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
