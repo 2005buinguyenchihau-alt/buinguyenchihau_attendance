@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ApiConstants {
-  // Đường dẫn Cloudflare Tunnel / Vercel public (dùng để test từ xa 24/7 qua 4G/Internet)
-  // Đặt thành null nếu muốn chuyển về dùng IP mạng LAN WiFi nội bộ
-  static String? publicUrl = 'https://memory-only-boolean-communist.trycloudflare.com';
+  // Đường dẫn Server Vercel Cloud (chạy 24/7 trực tiếp trên máy chủ đám mây Vercel):
+  // Hoặc dùng Cloudflare Tunnel: 'https://memory-only-boolean-communist.trycloudflare.com'
+  static String? publicUrl = 'https://temporary-quick-indigo-83rinlq.vercel.app';
 
   // IP của máy tính chạy server Backend (cùng mạng WiFi với điện thoại thật)
   // Nếu chạy trên máy ảo Android Emulator thì đổi thành '10.0.2.2'

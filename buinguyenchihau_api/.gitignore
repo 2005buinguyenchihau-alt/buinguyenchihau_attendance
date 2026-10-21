@@ -3,3 +3,5 @@ buinguyenchihau_db.sqlite*
 .env
 cloudflared.exe
 *.exe
+
+.vercel
