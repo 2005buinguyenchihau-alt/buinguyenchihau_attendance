@@ -5,6 +5,7 @@ const { initDatabase } = require('./config/database');
 
 const authRoutes = require('./routes/authRoutes');
 const apiRoutes = require('./routes/apiRoutes');
+const { openapiSpec, renderSwaggerHtml } = require('./config/swagger');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -32,6 +33,7 @@ app.get('/', (req, res) => {
     author: 'Bùi Nguyễn Chí Hậu',
     api_name: 'buinguyenchihau_api',
     database_name: 'buinguyenchihau_db',
+    swagger_ui: '/swagger',
     version: '1.0.0',
     timestamp: new Date().toISOString(),
   });
@@ -43,6 +45,16 @@ app.get('/api/health', (req, res) => {
     uptime: process.uptime(),
     database: 'buinguyenchihau_db.sqlite CONNECTED',
   });
+});
+
+// Swagger UI Interactive API Documentation endpoints
+app.get(['/swagger', '/docs', '/api-docs'], (req, res) => {
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(renderSwaggerHtml());
+});
+
+app.get(['/openapi.json', '/swagger.json'], (req, res) => {
+  res.json(openapiSpec);
 });
 
 // Routes
