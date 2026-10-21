@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { db } = require('../config/database');
 const { generateOtp, verifyOtp } = require('../utils/otp');
 const { JWT_SECRET } = require('../middlewares/auth');
+const { sendOtpEmail } = require('../services/emailService');
 
 // Lưu tạm thông tin đăng ký chờ xác thực OTP
 const pendingRegistrations = new Map();
@@ -10,7 +11,7 @@ const pendingRegistrations = new Map();
 /**
  * 1. Đăng ký tài khoản qua Email (Bước 1: Nhập thông tin & gửi OTP)
  */
-function register(req, res) {
+async function register(req, res) {
   try {
     const { username, email, password, full_name, code, role } = req.body;
 
@@ -45,14 +46,22 @@ function register(req, res) {
     // Sinh mã OTP 6 số
     const { code: otpCode, expiresAt } = generateOtp(email, 'register');
 
+    // Gửi email OTP xác thực tài khoản qua Gmail
+    let mailResult = null;
+    try {
+      mailResult = await sendOtpEmail({ toEmail: email, otpCode, type: 'register' });
+    } catch (err) {
+      console.error('[Register] Error sending email:', err.message);
+    }
+
     return res.status(200).json({
       success: true,
       message: `Mã OTP xác thực đăng ký đã được gửi đến ${email}.`,
       data: {
         email,
         expiresAt,
-        // Cung cấp otpCode để demo/thuyết trình và test nhanh mà không bị phụ thuộc SMTP
-        otpPreview: otpCode,
+        // Chỉ gửi otpPreview nếu mail KHÔNG gửi được (fallback chế độ demo/offline)
+        otpPreview: mailResult?.sent ? undefined : otpCode,
       },
     });
   } catch (error) {
@@ -123,7 +132,7 @@ function verifyRegisterOtp(req, res) {
 /**
  * 3. Đăng nhập (Username + Mật khẩu + Yêu cầu mã OTP 2FA)
  */
-function login(req, res) {
+async function login(req, res) {
   try {
     const { usernameOrEmail, password } = req.body;
 
@@ -144,6 +153,13 @@ function login(req, res) {
     // Sinh mã OTP 2FA cho phiên đăng nhập
     const { code: otpCode, expiresAt } = generateOtp(user.email, 'login');
 
+    let mailResult = null;
+    try {
+      mailResult = await sendOtpEmail({ toEmail: user.email, otpCode, type: 'login' });
+    } catch (err) {
+      console.error('[Login] Error sending email:', err.message);
+    }
+
     return res.status(200).json({
       success: true,
       message: `Đăng nhập bước 1 thành công. Vui lòng nhập mã OTP gửi tới ${user.email}.`,
@@ -153,7 +169,7 @@ function login(req, res) {
         role: user.role,
         requiresOtp: true,
         expiresAt,
-        otpPreview: otpCode, // Tiện lợi cho thuyết trình
+        otpPreview: mailResult?.sent ? undefined : otpCode,
       },
     });
   } catch (error) {
@@ -208,21 +224,110 @@ function verifyLoginOtp(req, res) {
  */
 function registerFace(req, res) {
   try {
-    const userId = req.user.id;
-    const { face_data, avatar } = req.body;
+    const userId = req.user?.id;
+    const { usernameOrEmail, face_data, avatar } = req.body;
 
     if (!face_data) {
-      return res.status(400).json({ success: false, message: 'Thiếu dữ liệu khuôn mặt.' });
+      return res.status(400).json({ success: false, message: 'Vui lòng cung cấp dữ liệu hình ảnh khuôn mặt.' });
     }
 
-    db.prepare('UPDATE users SET face_data = ?, avatar = COALESCE(?, avatar) WHERE id = ?').run(face_data, avatar || null, userId);
+    let user = null;
+    if (userId) {
+      user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+    } else if (usernameOrEmail && usernameOrEmail.trim().length > 0) {
+      const trimmed = usernameOrEmail.trim();
+      user = db.prepare('SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)').get(trimmed, trimmed);
+    }
+
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'Vui lòng chỉ định tài khoản hợp lệ để đăng ký khuôn mặt.' });
+    }
+
+    db.prepare('UPDATE users SET face_data = ?, avatar = COALESCE(?, avatar) WHERE id = ?').run(face_data, avatar || null, user.id);
+
+    console.log(`[FaceRegister] Đã đăng ký khuôn mặt thành công cho: ${user.full_name} (${user.username})`);
 
     return res.status(200).json({
       success: true,
-      message: 'Đã lưu mẫu khuôn mặt sinh trắc học thành công!',
+      message: `Đã đăng ký và lưu mẫu khuôn mặt thành công cho ${user.full_name}!`,
+      data: {
+        username: user.username,
+        full_name: user.full_name,
+      },
     });
   } catch (error) {
     console.error('Error in registerFace:', error);
+    return res.status(500).json({ success: false, message: 'Lỗi máy chủ: ' + error.message });
+  }
+}
+
+/**
+ * 5b. Đăng nhập bằng sinh trắc học khuôn mặt (Face Login)
+ */
+function faceLogin(req, res) {
+  try {
+    const { usernameOrEmail, face_data } = req.body;
+
+    if (!face_data) {
+      return res.status(400).json({ success: false, message: 'Vui lòng cung cấp dữ liệu hình ảnh khuôn mặt.' });
+    }
+
+    if (!usernameOrEmail || usernameOrEmail.trim().length === 0) {
+      return res.status(400).json({ success: false, message: 'Vui lòng chọn hoặc nhập tài khoản cần đăng nhập bằng khuôn mặt.' });
+    }
+
+    const trimmedAccount = usernameOrEmail.trim();
+    const user = db.prepare('SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)').get(trimmedAccount, trimmedAccount);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: `Không tìm thấy tài khoản "${trimmedAccount}" trong hệ thống.` });
+    }
+
+    // 1. Kiểm tra tài khoản đã đăng ký khuôn mặt hay chưa
+    if (!user.face_data) {
+      return res.status(400).json({
+        success: false,
+        notRegistered: true,
+        message: `Tài khoản "${user.full_name}" CHƯA ĐĂNG KÝ khuôn mặt! Vui lòng bấm "Đăng ký khuôn mặt này" trước để hệ thống ghi nhớ gương mặt bạn.`,
+      });
+    }
+
+    // 2. So khớp khuôn mặt: Bắt buộc khuôn mặt quét phải trùng khớp với khuôn mặt đã đăng ký
+    if (user.face_data !== face_data) {
+      return res.status(401).json({
+        success: false,
+        message: `Khuôn mặt quét được KHÔNG TRÙNG KHỚP với khuôn mặt đã đăng ký của ${user.full_name}! Truy cập bị từ chối.`,
+      });
+    }
+
+    const token = jwt.sign(
+      { id: user.id, username: user.username, email: user.email, role: user.role, full_name: user.full_name },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    const safeUser = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      full_name: user.full_name,
+      code: user.code,
+      role: user.role,
+      avatar: user.avatar,
+    };
+
+    console.log(`[FaceLogin] Xác thực khuôn mặt CHÍNH CHỦ thành công: ${user.full_name} (${user.role})`);
+
+    return res.status(200).json({
+      success: true,
+      message: `Xác thực khuôn mặt thành công! Chào mừng ${user.full_name}.`,
+      data: {
+        user: safeUser,
+        token,
+      },
+    });
+  } catch (error) {
+    console.error('Error in faceLogin:', error);
     return res.status(500).json({ success: false, message: 'Lỗi máy chủ: ' + error.message });
   }
 }
@@ -239,11 +344,104 @@ function getProfile(req, res) {
   }
 }
 
+/**
+ * 7. Quên mật khẩu - Yêu cầu gửi mã OTP về Gmail
+ */
+async function forgotPassword(req, res) {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Vui lòng cung cấp địa chỉ email.' });
+    }
+
+    const trimmedEmail = email.trim().toLowerCase();
+    const user = db.prepare('SELECT id, username, email, full_name FROM users WHERE LOWER(email) = ?').get(trimmedEmail);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy tài khoản nào gắn với email này.' });
+    }
+
+    // Sinh mã OTP loại reset_password
+    const { code: otpCode, expiresAt } = generateOtp(user.email, 'reset_password');
+
+    // Gửi email OTP khôi phục mật khẩu qua Gmail
+    let mailResult = null;
+    try {
+      mailResult = await sendOtpEmail({ toEmail: user.email, otpCode, type: 'reset_password' });
+    } catch (err) {
+      console.error('[ForgotPassword] Error sending email:', err.message);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Mã OTP khôi phục mật khẩu đã được gửi đến ${user.email}.`,
+      data: {
+        email: user.email,
+        expiresAt,
+        otpPreview: mailResult?.sent ? undefined : otpCode,
+      },
+    });
+  } catch (error) {
+    console.error('Error in forgotPassword:', error);
+    return res.status(500).json({ success: false, message: 'Lỗi máy chủ: ' + error.message });
+  }
+}
+
+/**
+ * 8. Đặt lại mật khẩu mới bằng mã OTP
+ */
+function resetPassword(req, res) {
+  try {
+    const email = req.body.email;
+    const otp_code = req.body.otp_code || req.body.otpCode;
+    const new_password = req.body.new_password || req.body.newPassword;
+
+    if (!email || !otp_code || !new_password) {
+      return res.status(400).json({ success: false, message: 'Vui lòng điền đầy đủ email, mã OTP và mật khẩu mới.' });
+    }
+
+    if (new_password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Mật khẩu mới phải có ít nhất 6 ký tự.' });
+    }
+
+    const trimmedEmail = email.trim().toLowerCase();
+    const otpResult = verifyOtp(trimmedEmail, otp_code.trim(), 'reset_password');
+
+    if (!otpResult.valid) {
+      return res.status(400).json({ success: false, message: otpResult.message });
+    }
+
+    const user = db.prepare('SELECT id FROM users WHERE LOWER(email) = ?').get(trimmedEmail);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng tương ứng.' });
+    }
+
+    const salt = bcrypt.genSaltSync(10);
+    const password_hash = bcrypt.hashSync(new_password, salt);
+
+    db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(password_hash, user.id);
+
+    console.log(`[Auth] Đã đổi mật khẩu thành công cho tài khoản ${trimmedEmail}`);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Đặt lại mật khẩu thành công! Bạn có thể đăng nhập bằng mật khẩu mới.',
+    });
+  } catch (error) {
+    console.error('Error in resetPassword:', error);
+    return res.status(500).json({ success: false, message: 'Lỗi máy chủ: ' + error.message });
+  }
+}
+
 module.exports = {
   register,
   verifyRegisterOtp,
   login,
   verifyLoginOtp,
   registerFace,
+  faceLogin,
   getProfile,
+  forgotPassword,
+  resetPassword,
 };

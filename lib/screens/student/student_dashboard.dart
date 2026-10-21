@@ -6,6 +6,7 @@ import '../../providers/auth_provider.dart';
 import '../../services/api_service.dart';
 import 'check_in_screen.dart';
 import 'history_screen.dart';
+import 'location_share_dialog.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({super.key});
@@ -162,11 +163,15 @@ class _StudentDashboardState extends State<StudentDashboard> {
                                 Text(
                                   user?.fullName ?? 'Bùi Nguyễn Chí Hậu',
                                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   'MSSV: ${user?.code ?? "2005BUI01"} • PRIME Team',
                                   style: const TextStyle(color: Colors.white70, fontSize: 13),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
@@ -224,6 +229,84 @@ class _StudentDashboardState extends State<StudentDashboard> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 12),
+
+                    // Quick Utility: "Chia sẻ vị trí GPS" & "Gửi đơn nghỉ" (Chức năng Thuyết trình 5.b)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              LocationShareDialog.show(
+                                context,
+                                studentName: user?.fullName ?? 'Sinh viên Hậu',
+                                studentCode: user?.code ?? '2005BUI01',
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(16),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: AppTheme.secondary.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: AppTheme.secondary.withValues(alpha: 0.25)),
+                              ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.share_location_rounded, color: AppTheme.secondary, size: 20),
+                                  SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      'Chia Sẻ Vị Trí GPS',
+                                      style: TextStyle(
+                                        color: AppTheme.secondary,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: InkWell(
+                            onTap: _showSubmitAbsenceDialog,
+                            borderRadius: BorderRadius.circular(16),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: AppTheme.primary.withValues(alpha: 0.06),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: AppTheme.primary.withValues(alpha: 0.2)),
+                              ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.note_alt_outlined, color: AppTheme.primary, size: 20),
+                                  SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      'Đơn Xin Nghỉ',
+                                      style: TextStyle(
+                                        color: AppTheme.primary,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 20),
 
                     // Active Sessions Banner (Nếu có ca học đang mở điểm danh)
@@ -248,8 +331,17 @@ class _StudentDashboardState extends State<StudentDashboard> {
                               color: hasAttended ? AppTheme.success : AppTheme.accent,
                               size: 32,
                             ),
-                            title: Text(s['class_name'] ?? '', style: const TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: Text('${s['session_name']} • ${s['room_name']}'),
+                            title: Text(
+                              s['class_name'] ?? '',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            subtitle: Text(
+                              '${s['session_name']} • ${s['room_name']}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                             trailing: hasAttended
                                 ? const Chip(
                                     label: Text('Đã có mặt', style: TextStyle(color: Colors.white, fontSize: 11)),
@@ -268,16 +360,21 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
                     // Danh sách Lớp Học Phần Của Sinh Viên
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Môn Học Đã Đăng Ký',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                        const Expanded(
+                          child: Text(
+                            'Môn Học Đã Đăng Ký',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                          ),
                         ),
                         TextButton.icon(
                           onPressed: _showSubmitAbsenceDialog,
                           icon: const Icon(Icons.note_add_outlined, size: 16),
                           label: const Text('Xin nghỉ phép'),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            visualDensity: VisualDensity.compact,
+                          ),
                         ),
                       ],
                     ),
@@ -314,20 +411,33 @@ class _StudentDashboardState extends State<StudentDashboard> {
                                           style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.secondary),
                                         ),
                                       ),
-                                      const Spacer(),
-                                      Text(
-                                        'Chuyên cần: ${rate.toInt()}%',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: rate >= 80 ? AppTheme.success : AppTheme.danger,
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          'Chuyên cần: ${rate.toInt()}%',
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: rate >= 80 ? AppTheme.success : AppTheme.danger,
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 10),
-                                  Text(c.className, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                  Text(
+                                    c.className,
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                   const SizedBox(height: 4),
-                                  Text('GV: ${c.lecturerName ?? "ThS. Bùi Nguyễn Chí Hậu"} • ${c.roomName}', style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary)),
+                                  Text(
+                                    'GV: ${c.lecturerName ?? "ThS. Bùi Nguyễn Chí Hậu"} • ${c.roomName}',
+                                    style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                   const SizedBox(height: 12),
                                   LinearProgressIndicator(
                                     value: rate / 100.0,

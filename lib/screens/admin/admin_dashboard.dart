@@ -196,6 +196,8 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
                                     Text(
                                       user?.fullName ?? 'Bùi Nguyễn Chí Hậu (Admin)',
                                       style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                     const Text('PRIME Multi-Role System', style: TextStyle(color: Colors.amber, fontSize: 12)),
                                   ],
@@ -335,9 +337,15 @@ class _AdminMetricCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title, style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 4),
               Icon(icon, color: color, size: 22),
             ],
           ),

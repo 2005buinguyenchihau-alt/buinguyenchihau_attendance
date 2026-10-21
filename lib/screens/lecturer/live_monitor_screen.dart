@@ -106,7 +106,13 @@ class _LiveMonitorScreenState extends State<LiveMonitorScreen> {
                               decoration: const BoxDecoration(color: Colors.greenAccent, shape: BoxShape.circle),
                             ),
                             const SizedBox(width: 6),
-                            const Text('Đang cập nhật thời gian thực (Live 3s)', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                            const Expanded(
+                              child: Text(
+                                'Live 3s thời gian thực',
+                                style: TextStyle(color: Colors.white70, fontSize: 12),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -174,8 +180,11 @@ class _LiveMonitorScreenState extends State<LiveMonitorScreen> {
                                       child: Text(
                                         r.studentName ?? 'Sinh viên',
                                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
+                                    const SizedBox(width: 6),
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                       decoration: BoxDecoration(
@@ -191,20 +200,31 @@ class _LiveMonitorScreenState extends State<LiveMonitorScreen> {
                                 ),
                                 subtitle: Padding(
                                   padding: const EdgeInsets.only(top: 6),
-                                  child: Row(
+                                  child: Wrap(
+                                    spacing: 12,
+                                    runSpacing: 4,
+                                    crossAxisAlignment: WrapCrossAlignment.center,
                                     children: [
                                       Text('MSSV: ${r.studentCode ?? 'N/A'}', style: const TextStyle(fontSize: 12)),
-                                      const SizedBox(width: 12),
-                                      const Icon(Icons.location_on, size: 14, color: AppTheme.secondary),
-                                      const SizedBox(width: 2),
-                                      Text(
-                                        r.distanceMeters != null ? '${r.distanceMeters}m' : 'Trong lớp',
-                                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.secondary),
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(Icons.location_on, size: 14, color: AppTheme.secondary),
+                                          const SizedBox(width: 2),
+                                          Text(
+                                            r.distanceMeters != null ? '${r.distanceMeters}m' : 'Trong lớp',
+                                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.secondary),
+                                          ),
+                                        ],
                                       ),
-                                      const Spacer(),
-                                      const Icon(Icons.face_retouching_natural, size: 14, color: AppTheme.primary),
-                                      const SizedBox(width: 2),
-                                      const Text('Face Verified', style: TextStyle(fontSize: 11, color: AppTheme.primary, fontWeight: FontWeight.bold)),
+                                      const Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.face_retouching_natural, size: 14, color: AppTheme.primary),
+                                          SizedBox(width: 2),
+                                          Text('Face Verified', style: TextStyle(fontSize: 11, color: AppTheme.primary, fontWeight: FontWeight.bold)),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 ),

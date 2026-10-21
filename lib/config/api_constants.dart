@@ -1,20 +1,15 @@
-import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ApiConstants {
-  // Thay đổi IP này nếu chạy trên thiết bị thật kết nối chung mạng WiFi với máy tính
-  static String customHost = 'localhost';
+  // IP của máy tính chạy server Backend (cùng mạng WiFi với điện thoại thật)
+  // Nếu chạy trên máy ảo Android Emulator thì đổi thành '10.0.2.2'
+  static String customHost = '192.168.1.12';
 
   static String get baseUrl {
     if (kIsWeb) {
       return 'http://localhost:5000/api';
     }
-    if (Platform.isAndroid) {
-      // 10.0.2.2 trỏ về localhost máy host của Android Emulator
-      // Nếu dùng điện thoại thật, có thể đổi thành IP LAN qua cài đặt
-      return 'http://10.0.2.2:5000/api';
-    }
-    return 'http://localhost:5000/api';
+    return 'http://$customHost:5000/api';
   }
 
   // Endpoints
@@ -22,8 +17,11 @@ class ApiConstants {
   static String get verifyRegisterOtp => '$baseUrl/auth/verify-register-otp';
   static String get login => '$baseUrl/auth/login';
   static String get verifyLoginOtp => '$baseUrl/auth/verify-login-otp';
+  static String get forgotPassword => '$baseUrl/auth/forgot-password';
+  static String get resetPassword => '$baseUrl/auth/reset-password';
   static String get profile => '$baseUrl/auth/profile';
   static String get faceRegister => '$baseUrl/auth/face-register';
+  static String get faceLogin => '$baseUrl/auth/face-login';
 
   static String get classes => '$baseUrl/classes';
   static String get studentClasses => '$baseUrl/student/classes';

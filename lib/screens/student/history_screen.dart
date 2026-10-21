@@ -88,23 +88,31 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                         style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primary, fontSize: 12),
                                       ),
                                     ),
-                                    const Spacer(),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.success.withValues(alpha: 0.15),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Icon(Icons.check_circle_rounded, size: 14, color: AppTheme.success),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            record.statusDisplay,
-                                            style: const TextStyle(color: AppTheme.success, fontWeight: FontWeight.bold, fontSize: 12),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: AppTheme.success.withValues(alpha: 0.15),
+                                            borderRadius: BorderRadius.circular(20),
                                           ),
-                                        ],
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Icon(Icons.check_circle_rounded, size: 14, color: AppTheme.success),
+                                              const SizedBox(width: 4),
+                                              Flexible(
+                                                child: Text(
+                                                  record.statusDisplay,
+                                                  style: const TextStyle(color: AppTheme.success, fontWeight: FontWeight.bold, fontSize: 12),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -113,19 +121,29 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 Text(
                                   record.className ?? 'Môn học',
                                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   record.sessionName ?? 'Buổi học',
                                   style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 const Divider(height: 24),
                                 Row(
                                   children: [
                                     const Icon(Icons.access_time_rounded, size: 14, color: AppTheme.textSecondary),
                                     const SizedBox(width: 4),
-                                    Text(dateStr, style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
-                                    const Spacer(),
+                                    Expanded(
+                                      child: Text(
+                                        dateStr,
+                                        style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
                                     const Icon(Icons.location_on_outlined, size: 14, color: AppTheme.secondary),
                                     const SizedBox(width: 2),
                                     Text(

@@ -105,14 +105,64 @@ class ApiService {
     return data;
   }
 
+  // 4b. Auth: Quên mật khẩu - Gửi mã OTP qua Gmail
+  Future<Map<String, dynamic>> forgotPassword(String email) async {
+    final res = await http.post(
+      Uri.parse(ApiConstants.forgotPassword),
+      headers: _headers,
+      body: jsonEncode({'email': email.trim().toLowerCase()}),
+    );
+    return jsonDecode(res.body);
+  }
+
+  // 4c. Auth: Đặt lại mật khẩu mới bằng mã OTP
+  Future<Map<String, dynamic>> resetPassword({
+    required String email,
+    required String otpCode,
+    required String newPassword,
+  }) async {
+    final res = await http.post(
+      Uri.parse(ApiConstants.resetPassword),
+      headers: _headers,
+      body: jsonEncode({
+        'email': email.trim().toLowerCase(),
+        'otp_code': otpCode.trim(),
+        'new_password': newPassword,
+      }),
+    );
+    return jsonDecode(res.body);
+  }
+
   // 5. Cập nhật khuôn mặt mẫu
-  Future<Map<String, dynamic>> registerFace(String faceData, {String? avatar}) async {
+  Future<Map<String, dynamic>> registerFace(String faceData, {String? usernameOrEmail, String? avatar}) async {
     final res = await http.post(
       Uri.parse(ApiConstants.faceRegister),
       headers: _headers,
-      body: jsonEncode({'face_data': faceData, 'avatar': avatar}),
+      body: jsonEncode({
+        if (usernameOrEmail != null && usernameOrEmail.isNotEmpty) 'usernameOrEmail': usernameOrEmail.trim(),
+        'face_data': faceData,
+        'avatar': avatar,
+      }),
     );
     return jsonDecode(res.body);
+  }
+
+  // 5b. Đăng nhập bằng sinh trắc học khuôn mặt
+  Future<Map<String, dynamic>> faceLogin({String? usernameOrEmail, required String faceData}) async {
+    final res = await http.post(
+      Uri.parse(ApiConstants.faceLogin),
+      headers: _headers,
+      body: jsonEncode({
+        if (usernameOrEmail != null && usernameOrEmail.isNotEmpty) 'usernameOrEmail': usernameOrEmail.trim(),
+        'face_data': faceData,
+      }),
+    );
+    final data = jsonDecode(res.body);
+    if (data['success'] == true && data['data'] != null) {
+      _token = data['data']['token'];
+      _currentUser = UserModel.fromJson(data['data']['user']);
+    }
+    return data;
   }
 
   // 6. Lớp học: Lấy danh sách lớp

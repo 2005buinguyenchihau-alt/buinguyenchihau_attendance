@@ -149,6 +149,106 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  // 5. Quên mật khẩu - Bước 1: Yêu cầu OTP gửi về Gmail
+  Future<Map<String, dynamic>> forgotPassword(String email) async {
+    _setLoading(true);
+    _errorMessage = null;
+
+    try {
+      final res = await _api.forgotPassword(email);
+      _setLoading(false);
+      if (res['success'] == true) {
+        return {
+          'success': true,
+          'message': res['message'] ?? 'Mã OTP đã được gửi đến email của bạn.',
+          'otpPreview': res['data']?['otpPreview']?.toString(),
+        };
+      } else {
+        _errorMessage = res['message'] ?? 'Không thể gửi yêu cầu đặt lại mật khẩu.';
+        return {'success': false, 'message': _errorMessage!};
+      }
+    } catch (e) {
+      _errorMessage = 'Lỗi kết nối máy chủ: $e';
+      _setLoading(false);
+      return {'success': false, 'message': _errorMessage!};
+    }
+  }
+
+  // 6. Quên mật khẩu - Bước 2: Xác nhận OTP và đặt lại mật khẩu mới
+  Future<Map<String, dynamic>> resetPassword({
+    required String email,
+    required String otpCode,
+    required String newPassword,
+  }) async {
+    _setLoading(true);
+    _errorMessage = null;
+
+    try {
+      final res = await _api.resetPassword(
+        email: email,
+        otpCode: otpCode,
+        newPassword: newPassword,
+      );
+      _setLoading(false);
+      if (res['success'] == true) {
+        return {
+          'success': true,
+          'message': res['message'] ?? 'Đặt lại mật khẩu thành công!',
+        };
+      } else {
+        _errorMessage = res['message'] ?? 'Mã OTP không đúng hoặc đã hết hạn.';
+        return {'success': false, 'message': _errorMessage!};
+      }
+    } catch (e) {
+      _errorMessage = 'Lỗi kết nối máy chủ: $e';
+      _setLoading(false);
+      return {'success': false, 'message': _errorMessage!};
+    }
+  }
+
+  // 7. Đăng nhập bằng sinh trắc học khuôn mặt (Face Login)
+  Future<bool> faceLogin({String? usernameOrEmail, required String faceData}) async {
+    _setLoading(true);
+    _errorMessage = null;
+
+    try {
+      final res = await _api.faceLogin(usernameOrEmail: usernameOrEmail, faceData: faceData);
+      if (res['success'] == true) {
+        _user = _api.currentUser;
+        _token = _api.token;
+        _waitingForOtp = false;
+        _pendingEmail = null;
+        _otpPreview = null;
+        _setLoading(false);
+        return true;
+      } else {
+        _errorMessage = res['message'] ?? 'Xác thực sinh trắc học khuôn mặt thất bại.';
+        _setLoading(false);
+        return false;
+      }
+    } catch (e) {
+      _errorMessage = 'Lỗi kết nối máy chủ: $e';
+      _setLoading(false);
+      return false;
+    }
+  }
+
+  // 8. Đăng ký mẫu khuôn mặt sinh trắc học
+  Future<Map<String, dynamic>> registerFace({String? usernameOrEmail, required String faceData}) async {
+    _setLoading(true);
+    _errorMessage = null;
+
+    try {
+      final res = await _api.registerFace(faceData, usernameOrEmail: usernameOrEmail);
+      _setLoading(false);
+      return res;
+    } catch (e) {
+      _errorMessage = 'Lỗi kết nối máy chủ: $e';
+      _setLoading(false);
+      return {'success': false, 'message': _errorMessage!};
+    }
+  }
+
   // Đăng xuất
   void logout() {
     _api.clearSession();

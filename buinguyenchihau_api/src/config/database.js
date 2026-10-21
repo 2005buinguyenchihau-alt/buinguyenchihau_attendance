@@ -29,13 +29,20 @@ function initDatabase() {
     );
   `);
 
-  // 2. OTP Codes table
+  // 2. OTP Codes table (hỗ trợ register, login, reset_password)
+  try {
+    const tableInfo = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='otp_codes'").get();
+    if (tableInfo && !tableInfo.sql.includes('reset_password')) {
+      db.exec("DROP TABLE IF EXISTS otp_codes");
+    }
+  } catch (e) {}
+
   db.exec(`
     CREATE TABLE IF NOT EXISTS otp_codes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT NOT NULL,
       otp_code TEXT NOT NULL,
-      type TEXT NOT NULL CHECK(type IN ('register', 'login')),
+      type TEXT NOT NULL CHECK(type IN ('register', 'login', 'reset_password')),
       expires_at TEXT NOT NULL,
       is_used INTEGER DEFAULT 0,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP

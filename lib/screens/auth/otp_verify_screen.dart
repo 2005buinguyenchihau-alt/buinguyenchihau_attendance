@@ -25,9 +25,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.otpPreview != null) {
-      _otpController.text = widget.otpPreview!;
-    }
+    // Để trống ô nhập mã để người dùng mở Gmail và nhập mã xác thực
   }
 
   Future<void> _handleVerify() async {

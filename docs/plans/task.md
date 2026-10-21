@@ -2,13 +2,13 @@
 
 | Task | Status | Notes |
 |---|---|---|
-| Khám phá ngữ cảnh dự án & quy định chấm điểm | Done | Đề 3: Điểm danh sinh viên, Nhóm PRIME, SV Bùi Nguyễn Chí Hậu |
-| Làm rõ yêu cầu & xác nhận thiết kế (Brainstorming) | Done | QR động 5s + GPS Geofence + Face AI + Khiên chống gian lận 3 lớp |
-| Đề xuất các phương án kiến trúc | Done | Phương án 1: Monorepo buinguyenchihau_api & buinguyenchihau_db |
-| Trình bày tài liệu thiết kế chi tiết (Design Sections) | Done | Đã hoàn thành và commit docs/plans/2026-10-21-student-attendance-design.md |
-| Lập kế hoạch thực thi chi tiết (Writing Plan) | Done | Đã hoàn thành và commit docs/plans/2026-10-21-student-attendance-system.md |
-| Khởi tạo Git & Liên kết GitHub repo | Done | Đã kết nối và đẩy thành công lên https://github.com/2005buinguyenchihau-alt/buinguyenchihau_attendance |
-| Thực thi kế hoạch - Batch 1: Xây dựng Backend WebAPI & DB | Done | buinguyenchihau_api (Node.js Express) & buinguyenchihau_db (SQLite), E2E test passed |
-| Thực thi kế hoạch - Batch 2: Core Attendance Engine (QR, GPS, AI Face) | Done | Sinh mã Dynamic TOTP QR 5s, tính Geofence Haversine, Anti-Proxy Shield |
-| Thực thi kế hoạch - Batch 3: Giao diện Flutter (Auth, Lecturer, Student, Admin) | Done | Material 3, Role Router, Live Radar Monitor, Sinh trắc học |
-| Kiểm thử tích hợp toàn diện & Push code lên GitHub | Done | Flutter test passed, analyze passed, pushed to origin/main |
+| Task 1: Cài đặt Nodemailer & Xây dựng emailService.js | Done | Nodemailer, dotenv, Gmail transporter & fallback test passed |
+| Task 2: Backend API Quên Mật Khẩu & Gửi Email Đăng Ký | Done | Endpoint /forgot-password & /reset-password, gửi OTP Gmail, test passed |
+| Task 3: Flutter Client API & State Management | Done | ApiService & AuthProvider bổ sung hàm forgotPassword và resetPassword |
+| Task 4: Giao diện Flutter Quên Mật Khẩu & Link Đăng Nhập | Done | ForgotPasswordScreen 2 bước, chống tràn chữ responsive, flutter analyze 0 issues |
+| Task 5: Xác minh kiểm thử toàn diện & Khởi động lại Server | Done | Test E2E passed 100%, server đang chạy, flutter analyze 0 issues |
+| Task 6: Backend API Đăng nhập Khuôn mặt (/auth/face-login) | Done | Endpoint nhận diện và đăng nhập bằng sinh trắc học khuôn mặt, test passed |
+| Task 7: Flutter Giao diện Đăng nhập Khuôn mặt (Face Login) | Done | Màn hình FaceLoginScreen camera quét sinh trắc học & nút trên LoginScreen |
+| Task 8: Flutter Tính năng Chia sẻ vị trí GPS thời gian thực | Done | LocationShareDialog hiển thị GPS, tính cự ly, chia sẻ link Maps |
+| Task 9: Kiểm thử toàn diện 3 chức năng & flutter analyze | Done | Đạt trọn 3.5 điểm: Face Login (5.a), Chia sẻ vị trí (5.b), Quét QR (5.e), 0 lỗi |
+| Task 10: Khắc phục triệt để Đăng ký mặt & Nhận diện khuôn mặt | Done | Sửa lỗi chặn đăng ký, hỗ trợ lưu mặt chính chủ mượt mà & cơ chế nhận diện chặn bạn bè |

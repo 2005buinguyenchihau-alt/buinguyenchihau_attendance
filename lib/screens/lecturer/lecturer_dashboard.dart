@@ -213,11 +213,15 @@ class _LecturerDashboardState extends State<LecturerDashboard> {
                                 Text(
                                   user?.fullName ?? 'ThS. Bùi Nguyễn Chí Hậu',
                                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   'Mã số: ${user?.code ?? "GV200501"} • PRIME Team',
                                   style: const TextStyle(color: Colors.white70, fontSize: 13),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
@@ -288,20 +292,44 @@ class _LecturerDashboardState extends State<LecturerDashboard> {
                                           style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primary),
                                         ),
                                       ),
-                                      const Spacer(),
-                                      const Icon(Icons.people_alt_outlined, size: 16, color: AppTheme.textSecondary),
-                                      const SizedBox(width: 4),
-                                      Text('${c.studentCount ?? 0} sinh viên', style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary)),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            const Icon(Icons.people_alt_outlined, size: 16, color: AppTheme.textSecondary),
+                                            const SizedBox(width: 4),
+                                            Flexible(
+                                              child: Text(
+                                                '${c.studentCount ?? 0} sinh viên',
+                                                style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   const SizedBox(height: 10),
-                                  Text(c.className, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                  Text(
+                                    c.className,
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                   const SizedBox(height: 6),
                                   Row(
                                     children: [
                                       const Icon(Icons.location_on_outlined, size: 14, color: AppTheme.textSecondary),
                                       const SizedBox(width: 4),
-                                      Text(c.roomName, style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary)),
+                                      Expanded(
+                                        child: Text(
+                                          c.roomName,
+                                          style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   const SizedBox(height: 14),
@@ -344,10 +372,23 @@ class _LecturerDashboardState extends State<LecturerDashboard> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text('${req.studentName} (${req.studentCode})', style: const TextStyle(fontWeight: FontWeight.bold)),
-                                      Text(req.statusDisplay, style: TextStyle(color: req.status == 'approved' ? AppTheme.success : AppTheme.warning, fontWeight: FontWeight.w600, fontSize: 12)),
+                                      Expanded(
+                                        child: Text(
+                                          '${req.studentName} (${req.studentCode})',
+                                          style: const TextStyle(fontWeight: FontWeight.bold),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        req.statusDisplay,
+                                        style: TextStyle(
+                                          color: req.status == 'approved' ? AppTheme.success : AppTheme.warning,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   const SizedBox(height: 6),
@@ -404,12 +445,18 @@ class _StatBox extends StatelessWidget {
             child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(value, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: color)),
-              Text(title, style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(value, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: color)),
+                Text(
+                  title,
+                  style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ],
       ),

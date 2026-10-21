@@ -99,7 +99,7 @@ class _DynamicQrScreenState extends State<DynamicQrScreen> with SingleTickerProv
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mã QR Điểm Danh Động (TOTP)'),
+        title: const Text('Mã QR Điểm Danh Động'),
         actions: [
           IconButton(
             icon: const Icon(Icons.radar_rounded, color: AppTheme.secondary),
@@ -147,16 +147,28 @@ class _DynamicQrScreenState extends State<DynamicQrScreen> with SingleTickerProv
                       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                     const SizedBox(height: 6),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 16,
+                      runSpacing: 4,
                       children: [
-                        const Icon(Icons.meeting_room_rounded, size: 16, color: Colors.white70),
-                        const SizedBox(width: 4),
-                        Text(widget.roomName, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-                        const SizedBox(width: 16),
-                        const Icon(Icons.radar_rounded, size: 16, color: Colors.white70),
-                        const SizedBox(width: 4),
-                        Text('Bán kính: ${widget.allowedRadius.toInt()}m', style: const TextStyle(color: Colors.white)),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.meeting_room_rounded, size: 16, color: Colors.white70),
+                            const SizedBox(width: 4),
+                            Text(widget.roomName, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.radar_rounded, size: 16, color: Colors.white70),
+                            const SizedBox(width: 4),
+                            Text('Bán kính: ${widget.allowedRadius.toInt()}m', style: const TextStyle(color: Colors.white)),
+                          ],
+                        ),
                       ],
                     ),
                   ],
@@ -169,12 +181,12 @@ class _DynamicQrScreenState extends State<DynamicQrScreen> with SingleTickerProv
                 elevation: 4,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                 child: Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   child: Column(
                     children: [
                       // Badge bảo vệ
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
                           color: AppTheme.secondary.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(20),
@@ -184,9 +196,12 @@ class _DynamicQrScreenState extends State<DynamicQrScreen> with SingleTickerProv
                           children: [
                             Icon(Icons.shield_rounded, size: 16, color: AppTheme.secondary),
                             SizedBox(width: 6),
-                            Text(
-                              'AI TRIPLE-SHIELD ANTI-PROXY',
-                              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.secondary),
+                            Flexible(
+                              child: Text(
+                                'AI Triple-Shield Anti-Proxy',
+                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.secondary),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),
@@ -196,8 +211,8 @@ class _DynamicQrScreenState extends State<DynamicQrScreen> with SingleTickerProv
                       // QR Code Container
                       _isLoading || _qrToken == null
                           ? const SizedBox(
-                              width: 250,
-                              height: 250,
+                              width: 200,
+                              height: 200,
                               child: Center(child: CircularProgressIndicator()),
                             )
                           : Container(
@@ -210,7 +225,7 @@ class _DynamicQrScreenState extends State<DynamicQrScreen> with SingleTickerProv
                               child: QrImageView(
                                 data: _qrToken!,
                                 version: QrVersions.auto,
-                                size: 240.0,
+                                size: 200.0,
                                 eyeStyle: const QrEyeStyle(
                                   eyeShape: QrEyeShape.square,
                                   color: AppTheme.primary,
@@ -248,18 +263,20 @@ class _DynamicQrScreenState extends State<DynamicQrScreen> with SingleTickerProv
                             ],
                           ),
                           const SizedBox(width: 14),
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Tự động đổi mã sau 5s',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                              ),
-                              Text(
-                                'Ngăn chặn chụp màn hình gửi Zalo',
-                                style: TextStyle(fontSize: 11, color: AppTheme.textSecondary),
-                              ),
-                            ],
+                          const Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Tự động đổi mã sau 5s',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                ),
+                                Text(
+                                  'Ngăn chặn chụp màn hình gửi Zalo',
+                                  style: TextStyle(fontSize: 11, color: AppTheme.textSecondary),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),

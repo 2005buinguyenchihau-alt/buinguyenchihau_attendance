@@ -218,30 +218,35 @@ class _CheckInScreenState extends State<CheckInScreen> {
                 border: Border.all(color: Colors.grey.shade200),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _ShieldStepItem(
-                    step: '1',
-                    label: 'QR Động 5s',
-                    icon: Icons.qr_code_scanner,
-                    isActive: _currentStep == 'SCAN_QR',
-                    isDone: _scannedToken != null,
+                  Expanded(
+                    child: _ShieldStepItem(
+                      step: '1',
+                      label: 'QR Động 5s',
+                      icon: Icons.qr_code_scanner,
+                      isActive: _currentStep == 'SCAN_QR',
+                      isDone: _scannedToken != null,
+                    ),
                   ),
-                  const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-                  _ShieldStepItem(
-                    step: '2',
-                    label: 'GPS Geofence',
-                    icon: Icons.location_on,
-                    isActive: _currentStep == 'CHECK_GPS',
-                    isDone: _calculatedDistance != null,
+                  const Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
+                  Expanded(
+                    child: _ShieldStepItem(
+                      step: '2',
+                      label: 'GPS Geofence',
+                      icon: Icons.location_on,
+                      isActive: _currentStep == 'CHECK_GPS',
+                      isDone: _calculatedDistance != null,
+                    ),
                   ),
-                  const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-                  _ShieldStepItem(
-                    step: '3',
-                    label: 'Face Match',
-                    icon: Icons.face,
-                    isActive: _currentStep == 'VERIFY_FACE',
-                    isDone: _currentStep == 'DONE',
+                  const Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
+                  Expanded(
+                    child: _ShieldStepItem(
+                      step: '3',
+                      label: 'Face Match',
+                      icon: Icons.face,
+                      isActive: _currentStep == 'VERIFY_FACE',
+                      isDone: _currentStep == 'DONE',
+                    ),
                   ),
                 ],
               ),
@@ -351,7 +356,12 @@ class _CheckInScreenState extends State<CheckInScreen> {
                 child: TextButton.icon(
                   onPressed: () => _showManualTokenDialog(),
                   icon: const Icon(Icons.keyboard_alt_outlined),
-                  label: const Text('Nhập mã token QR thủ công (Dành cho máy ảo/PC)'),
+                  label: const Flexible(
+                    child: Text(
+                      'Nhập mã token QR thủ công (Dành cho máy ảo/PC)',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ),
               ),
           ],
@@ -423,6 +433,9 @@ class _ShieldStepItem extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           label,
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(fontSize: 11, fontWeight: isActive || isDone ? FontWeight.bold : FontWeight.normal, color: color),
         ),
       ],

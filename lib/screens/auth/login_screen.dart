@@ -4,6 +4,8 @@ import '../../config/app_theme.dart';
 import '../../providers/auth_provider.dart';
 import 'register_screen.dart';
 import 'otp_verify_screen.dart';
+import 'forgot_password_screen.dart';
+import 'face_login_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -134,9 +136,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Icon(Icons.flash_on_rounded, size: 16, color: AppTheme.primary),
                         SizedBox(width: 6),
-                        Text(
-                          'Tài khoản mẫu thuyết trình (Bấm để điền nhanh):',
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.primary),
+                        Expanded(
+                          child: Text(
+                            'Tài khoản mẫu thuyết trình (Bấm để điền nhanh):',
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.primary),
+                          ),
                         ),
                       ],
                     ),
@@ -190,13 +194,44 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 6),
+
+              // Quên mật khẩu link
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    final enteredUserOrEmail = _usernameController.text.trim();
+                    final initialEmail = enteredUserOrEmail.contains('@') ? enteredUserOrEmail : null;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ForgotPasswordScreen(initialEmail: initialEmail),
+                      ),
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text(
+                    'Quên mật khẩu?',
+                    style: TextStyle(
+                      color: AppTheme.primary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
 
               // Login Button (Step 1 -> Triggers OTP)
               ElevatedButton(
                 onPressed: auth.isLoading ? null : _handleLogin,
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                   backgroundColor: AppTheme.primary,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
@@ -208,18 +243,60 @@ class _LoginScreenState extends State<LoginScreen> {
                       )
                     : const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.lock_open_rounded, size: 20),
                           SizedBox(width: 8),
-                          Text('Đăng Nhập (Yêu cầu OTP 2FA)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          Flexible(
+                            child: Text(
+                              'Đăng Nhập (Xác thực OTP)',
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                         ],
                       ),
+              ),
+              const SizedBox(height: 12),
+
+              // Nút Đăng nhập bằng Khuôn mặt (Chức năng Thuyết trình 5.a)
+              OutlinedButton.icon(
+                onPressed: () {
+                  final entered = _usernameController.text.trim();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => FaceLoginScreen(
+                        prefilledAccount: entered.isNotEmpty ? entered : null,
+                      ),
+                    ),
+                  );
+                },
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 16),
+                  side: const BorderSide(color: AppTheme.secondary, width: 1.5),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  backgroundColor: AppTheme.secondary.withValues(alpha: 0.05),
+                ),
+                icon: const Icon(Icons.face_retouching_natural_rounded, color: AppTheme.secondary, size: 22),
+                label: const Flexible(
+                  child: Text(
+                    'Đăng Nhập Bằng Khuôn Mặt (Face ID)',
+                    style: TextStyle(
+                      color: AppTheme.secondary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
 
               // Register Button Link
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   const Text('Chưa có tài khoản? ', style: TextStyle(color: AppTheme.textSecondary)),
                   GestureDetector(
@@ -235,14 +312,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Features overview footer
               Container(
-                padding: const EdgeInsets.all(12),
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.grey.shade200),
                 ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                child: const Wrap(
+                  alignment: WrapAlignment.spaceEvenly,
+                  spacing: 10,
+                  runSpacing: 8,
                   children: [
                     _FeatureBadge(icon: Icons.qr_code_2_rounded, text: 'QR Động 5s'),
                     _FeatureBadge(icon: Icons.location_on_rounded, text: 'GPS Geofence'),
@@ -266,6 +346,7 @@ class _FeatureBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 16, color: AppTheme.secondary),
         const SizedBox(width: 4),

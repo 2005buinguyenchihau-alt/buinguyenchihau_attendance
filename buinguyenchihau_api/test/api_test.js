@@ -1,4 +1,12 @@
 const http = require('http');
+const path = require('path');
+const { DatabaseSync } = require('node:sqlite');
+const db = new DatabaseSync(path.join(__dirname, '../buinguyenchihau_db.sqlite'));
+
+function getLatestOtp(email) {
+  const row = db.prepare('SELECT otp_code FROM otp_codes WHERE LOWER(email) = LOWER(?) ORDER BY id DESC LIMIT 1').get(email);
+  return row ? row.otp_code : null;
+}
 
 const PORT = 5000;
 const BASE_URL = `http://localhost:${PORT}`;
@@ -60,8 +68,8 @@ async function runTests() {
       role: 'student',
     });
     console.log('2. Register (Step 1 - Send OTP):', regRes.status === 200 ? 'PASS' : 'FAIL');
-    const otp = regRes.data.data.otpPreview;
     const testEmail = regRes.data.data.email;
+    const otp = regRes.data.data.otpPreview || getLatestOtp(testEmail);
 
     // 3. Verify OTP
     const verifyRegRes = await request('/api/auth/verify-register-otp', 'POST', {
@@ -76,7 +84,7 @@ async function runTests() {
       password: 'Gv@123456',
     });
     console.log('4. Lecturer Login (Step 1):', gvLoginRes.status === 200 ? 'PASS' : 'FAIL');
-    const gvOtp = gvLoginRes.data.data.otpPreview;
+    const gvOtp = gvLoginRes.data.data.otpPreview || getLatestOtp('gv.hau@prime.edu.vn');
 
     const gvVerifyRes = await request('/api/auth/verify-login-otp', 'POST', {
       email: 'gv.hau@prime.edu.vn',
@@ -101,17 +109,19 @@ async function runTests() {
     console.log('7. Generate Dynamic Rotating QR Token (5s):', qrRes.status === 200 ? 'PASS' : 'FAIL');
     const qrToken = qrRes.data.data.token;
 
-    // 8. Login Student Hau
-    const svLoginRes = await request('/api/auth/login', 'POST', {
+    // 8a. Đăng ký khuôn mặt chính chủ (Chức năng 5.a)
+    await request('/api/auth/face-register', 'POST', {
       usernameOrEmail: 'sinhvien.hau',
-      password: 'Sv@123456',
+      face_data: 'biometric_face_vector_hau_prime',
     });
-    const svOtp = svLoginRes.data.data.otpPreview;
-    const svVerifyRes = await request('/api/auth/verify-login-otp', 'POST', {
-      email: '2005buinguyenchihau@gmail.com',
-      otp_code: svOtp,
+
+    // 8b. Đăng nhập bằng khuôn mặt chính chủ
+    const svFaceLoginRes = await request('/api/auth/face-login', 'POST', {
+      usernameOrEmail: 'sinhvien.hau',
+      face_data: 'biometric_face_vector_hau_prime',
     });
-    const svToken = svVerifyRes.data.data.token;
+    console.log('8. Student Face Login (Chức năng 5.a):', svFaceLoginRes.status === 200 ? 'PASS' : 'FAIL');
+    const svToken = svFaceLoginRes.data.data.token;
 
     // 9. Student Check-in (AI Smart Shield: QR + GPS inside geofence + Face)
     const checkInRes = await request('/api/attendance/check-in', 'POST', {
