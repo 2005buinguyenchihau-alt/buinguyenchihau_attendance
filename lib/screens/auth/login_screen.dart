@@ -15,16 +15,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _usernameController = TextEditingController(text: 'sinhvien.hau');
-  final _passwordController = TextEditingController(text: 'Sv@123456');
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _obscurePassword = true;
-
-  void _fillSampleAccount(String username, String password) {
-    setState(() {
-      _usernameController.text = username;
-      _passwordController.text = password;
-    });
-  }
 
   Future<void> _handleLogin() async {
     final username = _usernameController.text.trim();
@@ -120,56 +113,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-
-              // Test Accounts Quick Buttons (Tiện ích cho thuyết trình)
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppTheme.primary.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppTheme.primary.withValues(alpha: 0.15)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Row(
-                      children: [
-                        Icon(Icons.flash_on_rounded, size: 16, color: AppTheme.primary),
-                        SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            'Tài khoản mẫu thuyết trình (Bấm để điền nhanh):',
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.primary),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 6,
-                      children: [
-                        ActionChip(
-                          avatar: const Icon(Icons.school, size: 14),
-                          label: const Text('Sinh viên Hậu', style: TextStyle(fontSize: 12)),
-                          onPressed: () => _fillSampleAccount('sinhvien.hau', 'Sv@123456'),
-                        ),
-                        ActionChip(
-                          avatar: const Icon(Icons.person, size: 14),
-                          label: const Text('Giảng viên Hậu', style: TextStyle(fontSize: 12)),
-                          onPressed: () => _fillSampleAccount('giangvien.hau', 'Gv@123456'),
-                        ),
-                        ActionChip(
-                          avatar: const Icon(Icons.admin_panel_settings, size: 14),
-                          label: const Text('Admin Hậu', style: TextStyle(fontSize: 12)),
-                          onPressed: () => _fillSampleAccount('admin', 'Admin@123'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
 
               // Username input
               TextField(

@@ -43,7 +43,7 @@ class _FaceLoginScreenState extends State<FaceLoginScreen> with SingleTickerProv
   @override
   void initState() {
     super.initState();
-    _accountController.text = widget.prefilledAccount ?? 'sinhvien.hau';
+    _accountController.text = widget.prefilledAccount ?? '';
 
     _cameraController = MobileScannerController(
       facing: CameraFacing.front,
@@ -511,43 +511,21 @@ class _FaceLoginScreenState extends State<FaceLoginScreen> with SingleTickerProv
                 ),
               ),
 
-            // Ô chọn tài khoản
+            // Ô nhập tài khoản
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _accountController,
-                      style: const TextStyle(color: Colors.white, fontSize: 13),
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.1),
-                        hintText: 'Tài khoản (vd: sinhvien.hau)',
-                        hintStyle: const TextStyle(color: Colors.white54, fontSize: 12),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        prefixIcon: const Icon(Icons.person_outline, color: Colors.white70, size: 18),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  PopupMenuButton<String>(
-                    icon: const Icon(Icons.swap_horiz_rounded, color: Colors.amber, size: 22),
-                    tooltip: 'Chọn tài khoản',
-                    onSelected: (val) => setState(() {
-                      _accountController.text = val;
-                      _errorMessage = null;
-                      _matchScore = null;
-                    }),
-                    itemBuilder: (context) => const [
-                      PopupMenuItem(value: 'sinhvien.hau', child: Text('Sinh viên Hậu')),
-                      PopupMenuItem(value: 'giangvien.hau', child: Text('Giảng viên Hậu')),
-                      PopupMenuItem(value: 'sinhvien.nghia', child: Text('Sinh viên Nghĩa')),
-                      PopupMenuItem(value: 'admin', child: Text('Admin')),
-                    ],
-                  ),
-                ],
+              child: TextField(
+                controller: _accountController,
+                style: const TextStyle(color: Colors.white, fontSize: 13),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white.withValues(alpha: 0.1),
+                  hintText: 'Tài khoản cần đăng nhập (vd: sinhvien.hau)',
+                  hintStyle: const TextStyle(color: Colors.white54, fontSize: 12),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  prefixIcon: const Icon(Icons.person_outline, color: Colors.white70, size: 18),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                ),
               ),
             ),
 
