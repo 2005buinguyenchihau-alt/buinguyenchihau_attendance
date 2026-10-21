@@ -8,7 +8,7 @@
 | Trình bày tài liệu thiết kế chi tiết (Design Sections) | Done | Đã hoàn thành và commit docs/plans/2026-10-21-student-attendance-design.md |
 | Lập kế hoạch thực thi chi tiết (Writing Plan) | Done | Đã hoàn thành và commit docs/plans/2026-10-21-student-attendance-system.md |
 | Khởi tạo Git & Liên kết GitHub repo | Done | Đã kết nối và đẩy thành công lên https://github.com/2005buinguyenchihau-alt/buinguyenchihau_attendance |
-| Thực thi kế hoạch - Batch 1: Xây dựng Backend WebAPI & DB | In Progress | buinguyenchihau_api (Node.js Express) & buinguyenchihau_db (SQLite) |
-| Thực thi kế hoạch - Batch 2: Core Attendance Engine (QR, GPS, AI Face) | Pending | Sinh mã Dynamic TOTP QR 5s, tính Geofence Haversine |
-| Thực thi kế hoạch - Batch 3: Giao diện Flutter (Auth, Lecturer, Student, Admin) | Pending | Material 3, Role Router, Live Radar Monitor, Sinh trắc học |
-| Kiểm thử tích hợp toàn diện & Push code lên GitHub | Pending | End-to-end verification |
+| Thực thi kế hoạch - Batch 1: Xây dựng Backend WebAPI & DB | Done | buinguyenchihau_api (Node.js Express) & buinguyenchihau_db (SQLite), E2E test passed |
+| Thực thi kế hoạch - Batch 2: Core Attendance Engine (QR, GPS, AI Face) | Done | Sinh mã Dynamic TOTP QR 5s, tính Geofence Haversine, Anti-Proxy Shield |
+| Thực thi kế hoạch - Batch 3: Giao diện Flutter (Auth, Lecturer, Student, Admin) | Done | Material 3, Role Router, Live Radar Monitor, Sinh trắc học |
+| Kiểm thử tích hợp toàn diện & Push code lên GitHub | Done | Flutter test passed, analyze passed, pushed to origin/main |
