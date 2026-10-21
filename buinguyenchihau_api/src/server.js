@@ -59,11 +59,16 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start listening
-app.listen(PORT, '0.0.0.0', () => {
-  console.log('================================================================');
-  console.log(`🚀 [buinguyenchihau_api] Server is running on http://localhost:${PORT}`);
-  console.log(`📂 [buinguyenchihau_db] Connected to SQLite database`);
-  console.log(`🎓 Sinh viên: Bùi Nguyễn Chí Hậu - Nhóm PRIME`);
-  console.log('================================================================');
-});
+// Export app for serverless platforms like Vercel
+module.exports = app;
+
+// Start listening if run directly or not on Vercel
+if (!process.env.VERCEL) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log('================================================================');
+    console.log(`🚀 [buinguyenchihau_api] Server is running on http://localhost:${PORT}`);
+    console.log(`📂 [buinguyenchihau_db] Connected to SQLite database`);
+    console.log(`🎓 Sinh viên: Bùi Nguyễn Chí Hậu - Nhóm PRIME`);
+    console.log('================================================================');
+  });
+}

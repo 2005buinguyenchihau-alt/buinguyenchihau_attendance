@@ -1,3 +1,5 @@
 node_modules/
 buinguyenchihau_db.sqlite*
 .env
+cloudflared.exe
+*.exe

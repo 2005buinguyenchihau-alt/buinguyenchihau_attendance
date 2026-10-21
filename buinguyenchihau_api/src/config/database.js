@@ -3,11 +3,29 @@ const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
 
-const dbPath = path.join(__dirname, '..', '..', 'buinguyenchihau_db.sqlite');
+const defaultPath = path.join(__dirname, '..', '..', 'buinguyenchihau_db.sqlite');
+let dbPath = defaultPath;
+
+if (process.env.VERCEL) {
+  const tmpPath = path.join('/tmp', 'buinguyenchihau_db.sqlite');
+  if (!fs.existsSync(tmpPath) && fs.existsSync(defaultPath)) {
+    try {
+      fs.copyFileSync(defaultPath, tmpPath);
+    } catch (e) {
+      console.warn('Could not copy existing db to /tmp:', e.message);
+    }
+  }
+  dbPath = tmpPath;
+}
+
 const db = new DatabaseSync(dbPath);
 
-// Enable WAL mode for high concurrency
-db.exec('PRAGMA journal_mode = WAL;');
+// Enable WAL mode for concurrency (or memory/fallback on serverless)
+try {
+  if (!process.env.VERCEL) {
+    db.exec('PRAGMA journal_mode = WAL;');
+  }
+} catch (e) {}
 db.exec('PRAGMA foreign_keys = ON;');
 
 function initDatabase() {

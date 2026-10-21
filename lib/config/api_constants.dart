@@ -1,11 +1,18 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ApiConstants {
+  // Đường dẫn Cloudflare Tunnel / Vercel public (dùng để test từ xa 24/7 qua 4G/Internet)
+  // Đặt thành null nếu muốn chuyển về dùng IP mạng LAN WiFi nội bộ
+  static String? publicUrl = 'https://memory-only-boolean-communist.trycloudflare.com';
+
   // IP của máy tính chạy server Backend (cùng mạng WiFi với điện thoại thật)
   // Nếu chạy trên máy ảo Android Emulator thì đổi thành '10.0.2.2'
   static String customHost = '192.168.1.12';
 
   static String get baseUrl {
+    if (publicUrl != null && publicUrl!.isNotEmpty) {
+      return '$publicUrl/api';
+    }
     if (kIsWeb) {
       return 'http://localhost:5000/api';
     }
