@@ -49,9 +49,11 @@ flutter run
 ```
 Hỗ trợ chạy trên Android, Windows Desktop hoặc Chrome Web.
 
-### 3. Tài Khoản Mẫu Để Kiểm Thử (Seed Data)
-| Vai trò | Tên đăng nhập | Email | Mật khẩu | Mã OTP |
-|---|---|---|---|---|
-| Admin | `admin` | admin@prime.edu.vn | `Admin@123` | Nhập mã hiện trên popup/terminal |
-| Giảng viên | `giangvien.hau` | gv.hau@prime.edu.vn | `Gv@123456` | Nhập mã hiện trên popup/terminal |
-| Sinh viên | `sinhvien.hau` | 2005buinguyenchihau@gmail.com | `Sv@123456` | Nhập mã hiện trên popup/terminal |
+### 3. Tài Khoản Để Kiểm Thử (Seed Data)
+| Vai trò | Họ tên | Tên đăng nhập | Email | Mật khẩu | Cơ chế OTP |
+|---|---|---|---|---|---|
+| Quản trị viên | Bùi Nguyễn Chí Hậu (Admin) | `admin` | `admin@prime.edu.vn` | `Admin@123` | Mã OTP hiển thị trên màn hình |
+| Giảng viên | ThS. Bùi Nguyễn Chí Hậu | `giangvien.hau` | `gv.hau@prime.edu.vn` | `Gv@123456` | Mã OTP hiển thị trên màn hình |
+| Sinh viên | Bùi Nguyễn Chí Hậu (SV) | `sinhvien.hau` | `2005buinguyenchihau@gmail.com` | `Sv@123456` | Gửi mã OTP thực tế về Gmail |
+| Sinh viên | Trần Minh Nghĩa | `sinhvien.nghia` | `nghia@prime.edu.vn` | `Sv@123456` | Mã OTP hiển thị trên màn hình |
+| Sinh viên | Nguyễn Tường Vy | `sinhvien.vy` | `vy@prime.edu.vn` | `Sv@123456` | Mã OTP hiển thị trên màn hình |
