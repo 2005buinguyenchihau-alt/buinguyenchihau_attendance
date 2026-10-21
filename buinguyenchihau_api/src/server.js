@@ -5,7 +5,7 @@ const { initDatabase } = require('./config/database');
 
 const authRoutes = require('./routes/authRoutes');
 const apiRoutes = require('./routes/apiRoutes');
-const { openapiSpec, renderSwaggerHtml } = require('./config/swagger');
+const { openapiSpec } = require('./config/swagger');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -47,11 +47,17 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Swagger UI Interactive API Documentation endpoints
-app.get(['/swagger', '/docs', '/api-docs'], (req, res) => {
-  res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.send(renderSwaggerHtml());
-});
+const swaggerUi = require('swagger-ui-express');
+
+// Swagger UI Interactive API Documentation (Official Swagger UI Express)
+const swaggerCustomOptions = {
+  customSiteTitle: 'Swagger UI - PRIME Attendance API | Bùi Nguyễn Chí Hậu',
+  customCss: `
+    .swagger-ui .topbar { display: none !important; }
+  `,
+};
+
+app.use(['/swagger', '/docs', '/api-docs'], swaggerUi.serve, swaggerUi.setup(openapiSpec, swaggerCustomOptions));
 
 app.get(['/openapi.json', '/swagger.json'], (req, res) => {
   res.json(openapiSpec);
