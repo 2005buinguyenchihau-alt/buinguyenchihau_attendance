@@ -59,7 +59,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   : ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       itemCount: _history.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      separatorBuilder: (_, _) => const SizedBox(height: 12),
                       itemBuilder: (context, index) {
                         final record = _history[index];
                         final time = DateTime.tryParse(record.checkInTime);

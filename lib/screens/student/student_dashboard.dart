@@ -289,7 +289,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: _classes.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        separatorBuilder: (_, _) => const SizedBox(height: 12),
                         itemBuilder: (context, index) {
                           final c = _classes[index];
                           final rate = c.attendanceRate;

@@ -147,7 +147,7 @@ class _LiveMonitorScreenState extends State<LiveMonitorScreen> {
                       : ListView.separated(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           itemCount: _records.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 10),
+                          separatorBuilder: (_, _) => const SizedBox(height: 10),
                           itemBuilder: (context, index) {
                             final r = _records[index];
                             final time = DateTime.tryParse(r.checkInTime);

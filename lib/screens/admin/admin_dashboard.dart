@@ -252,7 +252,7 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: _users.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    separatorBuilder: (_, _) => const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       final u = _users[index];
                       return Card(
@@ -290,7 +290,7 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: _classes.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    separatorBuilder: (_, _) => const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       final c = _classes[index];
                       return Card(
